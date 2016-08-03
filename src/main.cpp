@@ -1,4 +1,5 @@
 #include "Preview.h"
+#include "Solution.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
@@ -113,6 +114,7 @@ int main(int argc, char** argv)
 
     cv::Mat image = cv::imread(argv[1]);
 
+    Solution solution;
     Preview preview{image};
 
     while (!glfwWindowShouldClose(window)) {
@@ -122,6 +124,7 @@ int main(int argc, char** argv)
 
             // Settings
             ImGui::BeginMainMenuBar();
+            int menuHeight = ImGui::GetTextLineHeightWithSpacing();
             if(ImGui::BeginMenu("File")) {
                 if(ImGui::MenuItem("Quit")) {
                     glfwSetWindowShouldClose(window, GL_TRUE);
@@ -130,7 +133,36 @@ int main(int argc, char** argv)
             }
             ImGui::EndMainMenuBar();
 
-            if(ImGui::Begin("Settings")) {
+            bool open = false;
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+            ImGui::SetNextWindowPos(ImVec2(0, menuHeight));
+            ImGui::SetNextWindowSize(ImVec2(400, ImGui::GetIO().DisplaySize.y - menuHeight));
+            if (ImGui::Begin("###main", &open, ImVec2(0, 0), 0.5f,
+                             ImGuiWindowFlags_NoTitleBar |
+                             ImGuiWindowFlags_NoResize |
+                             ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+                             ImGuiWindowFlags_NoSavedSettings))
+            {
+                if (ImGui::TreeNodeEx("Solution", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    solution.draw();
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNodeEx("Algorithm", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    static int currentAlgorithm = 0;
+                    ImGui::Combo("###AlgorithmCombo", &currentAlgorithm, "simple\0empty\0\0");
+                    ImGui::TreePop();
+                }
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::Spacing();
+                if (ImGui::Button("Calculate Pattern", ImVec2(ImGui::GetContentRegionAvailWidth(), 20))) {
+                    // start
+                }
+            }
+            ImGui::End();
+            ImGui::PopStyleVar();
+
+            if (ImGui::Begin("Settings")) {
                 ImGui::SliderFloat("Black Score", &blackScore, 0.1, 10.0);
                 ImGui::SliderFloat("White Score", &whiteScore, 0.1, 10.0);
                 ImGui::SliderInt("Penalty", &penalty, 0, 255);
