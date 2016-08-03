@@ -1,5 +1,6 @@
 set(stixel_SRC
   main.cpp
+  Preview.cpp
   ../3rdparty/imgui/examples/libs/gl3w/GL/gl3w.c
   ../3rdparty/imgui/imgui_draw.cpp
   ../3rdparty/imgui/imgui.cpp
@@ -7,6 +8,7 @@ set(stixel_SRC
   )
 
 set(stixel_HDR
+  Preview.h
   )
 
 include_directories(${PROJECT_SOURCE_DIR}/3rdparty/imgui/)

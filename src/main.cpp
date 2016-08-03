@@ -1,4 +1,6 @@
-#include <imgui.h>
+#include "Preview.h"
+
+#include "imgui.h"
 #include "imgui_impl_glfw_gl3.h"
 
 #include <stdio.h>
@@ -49,7 +51,7 @@ void calculatePattern(cv::Mat image)
             float sum = 0;
             for (int index = 0; index < line.count; ++index, line++)
             {
-                sum += pow(255 - (uchar)**line, 2);
+                sum += 255 - (uchar)**line;
             }
 
             float score = sum / line.count;
@@ -65,7 +67,8 @@ void calculatePattern(cv::Mat image)
         cv::LineIterator line(image, start, end, 8);
         for (int index = 0; index < line.count; ++index, line++)
         {
-            image.at<uchar>(line.pos()) += penalty;
+            image.at<uchar>(line.pos()) = image.at<uchar>(line.pos()) + penalty > 255
+                ? 255 : image.at<uchar>(line.pos()) + penalty;
         }
 
         prevPin = currentPin;
@@ -109,28 +112,8 @@ int main(int argc, char** argv)
     ImVec4 clear_color = ImColor(39, 40, 34);
 
     cv::Mat image = cv::imread(argv[1]);
-    GLuint texID;
-    glGenTextures(1, &texID);
-    glBindTexture(GL_TEXTURE_2D, texID);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 image.cols,
-                 image.rows,
-                 0,
-                 GL_BGR,
-                 GL_UNSIGNED_BYTE,
-                 image.ptr());
-
-    bool showImage = true;
-    bool showBorder = false;
-    bool showPins = true;
-    bool showStrings = true;
-    float stringAlpha = 0.2;
+    Preview preview{image};
 
     while (!glfwWindowShouldClose(window)) {
         if(!glfwGetWindowAttrib(window, GLFW_ICONIFIED) && glfwGetWindowAttrib(window, GLFW_VISIBLE)) {
@@ -155,7 +138,6 @@ int main(int argc, char** argv)
                 ImGui::InputInt("Pins", &pins);
                 ImGui::InputFloat("Pin Thickness", &pinThickness);
                 ImGui::SliderInt("Min Space", &minSpace, 0, pins / 3);
-                ImGui::SliderFloat("String Alpha", &stringAlpha, 0.0, 1.0);
 
                 ImGui::Separator();
 
@@ -175,51 +157,7 @@ int main(int argc, char** argv)
             ImGui::End();
 
             // Preview
-            if(ImGui::Begin("Preview")) {
-                ImGui::Checkbox("Image", &showImage);
-                ImGui::SameLine(200);
-                ImGui::Checkbox("Border", &showBorder);
-                ImGui::Checkbox("Pins", &showPins);
-                ImGui::SameLine(200);
-                ImGui::Checkbox("Strings", &showStrings);
-
-                ImGui::Separator();
-                auto drawList = ImGui::GetWindowDrawList();
-                auto start = ImGui::GetCursorScreenPos();
-
-                if(showImage) {
-                    ImGui::Image(reinterpret_cast<void*>(texID), ImVec2(500, 500));
-                } else {
-                    ImGui::Dummy(ImVec2(500, 500));
-                    drawList->AddRectFilled(start, ImVec2(start.x + 500, start.y + 500), ImColor(255, 255, 255));
-                }
-
-                if(showBorder) {
-                    drawList->AddCircle(ImVec2(start.x + 250, start.y + 250), 250, ImColor(0, 200, 0), 64, 3.0);
-                }
-
-                if(showPins) {
-                    for(int pin = 0; pin < pins; ++pin) {
-                        ImVec2 center;
-                        center.x = start.x + 250 + cos(pin * 360.0 / pins * M_PI / 180) * 250;
-                        center.y = start.y + 250 + sin(pin * 360.0 / pins * M_PI / 180) * 250;
-                        drawList->AddCircleFilled(center, pinThickness, ImColor(255, 100, 0), 8);
-                    }
-                }
-
-                if (showStrings && !pattern.empty()) {
-                    drawList->PathClear();
-                    for (auto pin : pattern) {
-                        ImVec2 pos;
-                        pos.x = start.x + 250 + cos(pin * 360.0 / pins * M_PI / 180) * 250;
-                        pos.y = start.y + 250 + sin(pin * 360.0 / pins * M_PI / 180) * 250;
-                        drawList->PathLineTo(pos);
-                    }
-                    drawList->PathStroke(ImColor(ImVec4{0, 0, 0, stringAlpha}), false);
-                    drawList->PathClear();
-                }
-            }
-            ImGui::End();
+            preview.draw(pattern);
 
             // Rendering
             int display_w, display_h;
