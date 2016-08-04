@@ -118,6 +118,7 @@ int main(int argc, char** argv)
     Solution solution;
     AlgSimple simple;
     Preview preview{image};
+    Preview preview2{image};
 
     while (!glfwWindowShouldClose(window)) {
         if(!glfwGetWindowAttrib(window, GLFW_ICONIFIED) && glfwGetWindowAttrib(window, GLFW_VISIBLE)) {
@@ -193,6 +194,7 @@ int main(int argc, char** argv)
 
             // Preview
             preview.draw(pattern);
+            preview2.draw(pattern);
 
             // Rendering
             int display_w, display_h;
