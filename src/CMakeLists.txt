@@ -1,5 +1,6 @@
 set(stixel_SRC
   main.cpp
+  AlgSimple.cpp
   Preview.cpp
   Solution.cpp
   ../3rdparty/imgui/examples/libs/gl3w/GL/gl3w.c
@@ -9,6 +10,7 @@ set(stixel_SRC
   )
 
 set(stixel_HDR
+  AlgSimple.h
   Preview.h
   Solution.h
   )

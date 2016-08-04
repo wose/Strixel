@@ -1,3 +1,4 @@
+#include "AlgSimple.h"
 #include "Preview.h"
 #include "Solution.h"
 
@@ -115,6 +116,7 @@ int main(int argc, char** argv)
     cv::Mat image = cv::imread(argv[1]);
 
     Solution solution;
+    AlgSimple simple;
     Preview preview{image};
 
     while (!glfwWindowShouldClose(window)) {
@@ -150,6 +152,7 @@ int main(int argc, char** argv)
                 if (ImGui::TreeNodeEx("Algorithm", ImGuiTreeNodeFlags_DefaultOpen)) {
                     static int currentAlgorithm = 0;
                     ImGui::Combo("###AlgorithmCombo", &currentAlgorithm, "simple\0empty\0\0");
+                    simple.draw();
                     ImGui::TreePop();
                 }
                 ImGui::Spacing();
