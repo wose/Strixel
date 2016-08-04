@@ -4,7 +4,7 @@ Strixel will convert a grayscale image to a knitting pattern. It is
 inspired by the amazing work done by
 [Petros Vrellis](http://artof01.com/vrellis/). Checkout his projects
 and take a look at [this video](https://vimeo.com/175653201) to get an
-idea what this software tries to accomblish.
+idea what this software tries to reproduce and accomblish.
 
 ## Current State
 :warning: very early stage / messy code
