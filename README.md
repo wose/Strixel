@@ -21,6 +21,17 @@ Works only with square images at the moment.
 % ./strixel image.png
 ```
 
+## Todo
+
+- [ ] save/load pattern
+- [ ] step throu, play, pause, resume pattern
+- [ ] use more than one thread and display progress
+- [ ] use text2speech to communicate next pin ([festival](http://www.cstr.ed.ac.uk/projects/festival/), [espeak](http://espeak.sourceforge.net/), ...)
+- [ ] knit first real pattern and verify that the preview is representative
+- [ ] take pin thickness into account
+- [ ] take thread thickness into account (subpixel line)
+- [ ] decide how much darker the pixel is depending on the parts of the pixel already covered by threads
+
 ## Hacking
 
 ```shell
@@ -32,4 +43,14 @@ Works only with square images at the moment.
 
 ## Ideas
 
-*(will add some in the next days)*
+### Genetic Algorithm
+
+- [ ] see if there are genes which can be muteted
+
+### Multi Frame
+
+By combining two images it should be possible to generate 2 webs
+within different frames which produce each image in different
+rotations to each other. It might also be possible to add a third
+frame with white thread between those two to cancel some of the parts
+of the bottom frame depending on its rotation.
