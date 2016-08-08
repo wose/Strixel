@@ -1,6 +1,8 @@
 #ifndef STRIXEL_PREVIEW_H
 #define STRIXEL_PREVIEW_H
 
+#include "Solution.h"
+
 #include <GL/gl3w.h>
 #include <opencv2/opencv.hpp>
 
@@ -9,10 +11,10 @@
 class Preview
 {
 public:
-    Preview(cv::Mat image);
+    Preview(const Solution& solution);
     virtual ~Preview() = default;
 
-    virtual void draw(const std::vector<int>& pattern);
+    virtual void draw(const Solution& solution);
 
 private:
     static int nextPreviewID_;

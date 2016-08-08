@@ -5,10 +5,10 @@
 
 int Preview::nextPreviewID_ = 0;
 
-Preview::Preview(cv::Mat image) :
-    image_{image},
+Preview::Preview(const Solution& solution) :
     id_{++nextPreviewID_}
 {
+    cv::Mat image = solution.getImage();
     glGenTextures(1, &textureID_);
     glBindTexture(GL_TEXTURE_2D, textureID_);
 
@@ -18,15 +18,15 @@ Preview::Preview(cv::Mat image) :
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
-                 image_.cols,
-                 image_.rows,
+                 image.cols,
+                 image.rows,
                  0,
                  GL_BGR,
                  GL_UNSIGNED_BYTE,
-                 image_.ptr());
+                 image.ptr());
 }
 
-void Preview::draw(const std::vector<int>& pattern)
+void Preview::draw(const Solution& solution)
 {
     std::ostringstream title;
     title << "Preview##" << id_;
@@ -61,17 +61,17 @@ void Preview::draw(const std::vector<int>& pattern)
         }
 
         if (showPins_) {
-            for(int pin = 0; pin < pins; ++pin) {
+            for(int pin = 0; pin < solution.getPins(); ++pin) {
                 ImVec2 center;
-                center.x = start.x + 250 + cos(pin * 360.0 / pins * M_PI / 180) * 250;
-                center.y = start.y + 250 + sin(pin * 360.0 / pins * M_PI / 180) * 250;
+                center.x = start.x + 250 + cos(pin * 360.0 / solution.getPins() * M_PI / 180) * 250;
+                center.y = start.y + 250 + sin(pin * 360.0 / solution.getPins() * M_PI / 180) * 250;
                 drawList->AddCircleFilled(center, pinThickness, ImColor(255, 100, 0), 8);
             }
         }
 
-        if (showStrings_ && !pattern.empty()) {
+        if (showStrings_ && !solution.empty()) {
             drawList->PathClear();
-            for (const auto& pin : pattern) {
+            for (auto const& pin : solution) {
                 ImVec2 pos;
                 pos.x = start.x + 250 + cos(pin * 360.0 / pins * M_PI / 180) * 250;
                 pos.y = start.y + 250 + sin(pin * 360.0 / pins * M_PI / 180) * 250;
