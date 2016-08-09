@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include <map>
+
 AlgSimple::AlgSimple() :
     calculating_{false},
     currentPass_{0}
@@ -21,6 +23,7 @@ void AlgSimple::draw()
 void AlgSimple::calculate(Solution& solution)
 {
     calculating_ = true;
+    solution.clear();
 
     int currentPin= 0;
     solution.push_back(currentPin);
@@ -28,6 +31,8 @@ void AlgSimple::calculate(Solution& solution)
     cv::Mat image;
     cv::cvtColor(solution.getImage(), image, cv::COLOR_BGR2GRAY);
     auto pins = solution.getPins();
+
+    std::map<std::pair<int, int>, bool> strings;
 
     for(currentPass_ = 1; currentPass_ <= solution.getPasses(); currentPass_++)
     {
@@ -40,23 +45,29 @@ void AlgSimple::calculate(Solution& solution)
 
         for (int pin = ((currentPin + 1 + minSpace_) % 360); ((pin + minSpace_) % 360) != currentPin; pin = ++pin % 360)
         {
-            cv::Point2d end{image.cols / 2 + cos(pin * 360 / pins * M_PI / 180) * image.cols / 2,
-                    image.rows / 2 + sin(pin * 360 / pins * M_PI / 180) * image.rows / 2};
-
-            cv::LineIterator line(image, start, end, 8);
-            float sum = 0;
-            for (int index = 0; index < line.count; ++index, line++)
+            if (!morePassesPerPinPair_ ||
+                (strings.find(std::make_pair(prevPin, pin)) == strings.end() &&
+                 strings.find(std::make_pair(pin, prevPin)) == strings.end()))
             {
-                sum += 255 - (uchar)**line;
-            }
+                cv::Point2d end{image.cols / 2 + cos(pin * 360 / pins * M_PI / 180) * image.cols / 2,
+                        image.rows / 2 + sin(pin * 360 / pins * M_PI / 180) * image.rows / 2};
 
-            float score = sum / line.count;
-            if (score > maxScore)
-            {
-                maxScore = score;
-                nextPin = pin;
+                cv::LineIterator line(image, start, end, 8);
+                float sum = 0;
+                for (int index = 0; index < line.count; ++index, line++)
+                {
+                    sum += 255 - (uchar)**line;
+                }
+
+                float score = sum / line.count;
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                    nextPin = pin;
+                }
             }
         }
+
         cv::Point2d end{image.cols / 2 + cos(nextPin * 360 / pins * M_PI / 180) * image.cols / 2,
                 image.rows / 2 + sin(nextPin * 360 / pins * M_PI / 180) * image.rows / 2};
 
@@ -70,6 +81,7 @@ void AlgSimple::calculate(Solution& solution)
         prevPin = currentPin;
         currentPin = nextPin;
         solution.push_back(currentPin);
+        strings.emplace(std::make_pair(std::make_pair(prevPin, currentPin), true));
     }
 
     calculating_ = false;

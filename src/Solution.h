@@ -16,6 +16,10 @@ public:
         return pattern_.empty();
     }
 
+    void clear() {
+        pattern_.clear();
+    }
+
     cv::Mat getImage() const {
         return image_;
     }
