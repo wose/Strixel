@@ -60,6 +60,9 @@ public:
         return pattern_.cend();
     }
 
+    void save(const char* file);
+    void load(const char* file);
+
 private:
     cv::Mat image_;
     int passes_ = 3000;

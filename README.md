@@ -23,7 +23,7 @@ Works only with square images at the moment.
 
 ## Todo
 
-- [ ] save/load pattern
+- [x] save/load pattern
 - [ ] step throu, play, pause, resume pattern
 - [ ] use more than one thread and display progress
 - [ ] use text2speech to communicate next pin ([festival](http://www.cstr.ed.ac.uk/projects/festival/), [espeak](http://espeak.sourceforge.net/), ...)

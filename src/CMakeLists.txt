@@ -22,4 +22,4 @@ include_directories(${PROJECT_SOURCE_DIR}/3rdparty/imgui/examples/opengl3_exampl
 # add_definitions(-DIMGUI_DISABLE_TEST_WINDOW)
 
 add_executable(stixel ${stixel_SRC})
-target_link_libraries(stixel ${OPENGL_LIBRARIES} ${OpenCV_LIBS} glfw dl)
+target_link_libraries(stixel ${OPENGL_LIBRARIES} ${OpenCV_LIBS} glfw dl pugixml)
