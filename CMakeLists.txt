@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(Stixel)
+project(Strixel)
 
 if(MSVC)
   set(CMAKE_USE_RELATIVE_PATHS ON CACHE INTERNAL "" FORCE)
