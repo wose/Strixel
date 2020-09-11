@@ -1,0 +1,25 @@
+[package]
+name = "strixel"
+version = "0.1.0"
+authors = ["Sebastian Woetzel <wose@zuendmasse.de>"]
+edition = "2018"
+license = "GPL-3.0"
+readme = "README.md"
+description = "Converts images to string art pattern."
+repository = "https://github.com/wose/Strixel"
+
+[dependencies]
+anyhow = "1.0"
+futures = "0.3.5"
+image = "0.23.8"
+imgui = "0.4"
+imgui-wgpu = "0.9.0"
+raw-window-handle = "0.3"
+wgpu = "0.6"
+wgpu-subscriber = "0.1"
+winit = "0.22.2"
+
+[dependencies.imgui-winit-support]
+version = "0.4.0"
+default-features = false
+features = ["winit-22"]
